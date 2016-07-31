@@ -5,12 +5,23 @@ class Board extends React.Component {
         super(props);
         this.state = {
             board: [['','',''], ['','',''], ['','','']],
+            error: ""
         };
         this.handleClick = this.handleClick.bind(this);
     }
     handleClick(x,y) {
-        // update based on click
         var board = this.state.board
+
+        // try to move on a spot that has been taken already
+        if (board[x][y] != "") {
+            this.setState({error: board[x][y] + " is already there"})
+            return
+        }
+        else {
+            this.setState({error: ""})
+        }
+
+        // update based on click
         board[x][y] = 'x'
 
         // get AI move
@@ -21,6 +32,7 @@ class Board extends React.Component {
         var data = JSON.stringify({"board": board})
         xhttp.send(data);
 
+        // super hacky solution to solve a scoping problem... I don't like it
         var obj = this
 
         xhttp.onreadystatechange = function() {
@@ -32,25 +44,28 @@ class Board extends React.Component {
     }
     render() {
         return (
-            <table>
-            <tbody>
-            <tr>
-            <Square board={this.state.board} handleClick={this.handleClick} x="0" y="0"/>
-            <Square board={this.state.board} handleClick={this.handleClick} x="0" y="1"/>
-            <Square board={this.state.board} handleClick={this.handleClick} x="0" y="2"/>
-            </tr>
-            <tr>
-            <Square board={this.state.board} handleClick={this.handleClick} x="1" y="0"/>
-            <Square board={this.state.board} handleClick={this.handleClick} x="1" y="1"/>
-            <Square board={this.state.board} handleClick={this.handleClick} x="1" y="2"/>
-            </tr>
-            <tr>
-            <Square board={this.state.board} handleClick={this.handleClick} x="2" y="0"/>
-            <Square board={this.state.board} handleClick={this.handleClick} x="2" y="1"/>
-            <Square board={this.state.board} handleClick={this.handleClick} x="2" y="2"/>
-            </tr>
-            </tbody>
-            </table>
+            <div>
+            <h1>{this.state.error}</h1>
+                <table>
+                    <tbody>
+                        <tr>
+                            <Square board={this.state.board} handleClick={this.handleClick} x="0" y="0"/>
+                            <Square board={this.state.board} handleClick={this.handleClick} x="0" y="1"/>
+                            <Square board={this.state.board} handleClick={this.handleClick} x="0" y="2"/>
+                        </tr>
+                        <tr>
+                            <Square board={this.state.board} handleClick={this.handleClick} x="1" y="0"/>
+                            <Square board={this.state.board} handleClick={this.handleClick} x="1" y="1"/>
+                            <Square board={this.state.board} handleClick={this.handleClick} x="1" y="2"/>
+                        </tr>
+                        <tr>
+                            <Square board={this.state.board} handleClick={this.handleClick} x="2" y="0"/>
+                            <Square board={this.state.board} handleClick={this.handleClick} x="2" y="1"/>
+                            <Square board={this.state.board} handleClick={this.handleClick} x="2" y="2"/>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             );  
     }
 }
