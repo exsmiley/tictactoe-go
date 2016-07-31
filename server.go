@@ -12,10 +12,18 @@ type Board struct {
 	Board [][]string
 }
 
-func executeNextMove(b *Board) {
+func executeNextMove(b *Board) string{
+    over, winner := player.IsGameOver(b.Board)
+
+    if over {
+        fmt.Println(winner, "won the game!")
+        return winner
+    }
+
     move := player.GetNextMove(b.Board)
-    fmt.Println(move)
 	b.Board[move.X][move.Y] = "o"
+
+    return ""
 }
 
 func moveHandler(w http.ResponseWriter, r *http.Request) {
