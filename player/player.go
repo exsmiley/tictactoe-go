@@ -2,6 +2,7 @@ package player
 
 import (
     "fmt"
+    "math/rand"
 )
 
 // IsGameOver returns true if the game is over and the name of the winner
@@ -54,6 +55,15 @@ func getAllMoves(board [][]string) []Move{
         }
     }
 
+    // want the moves to be scrambled for some fun
+    scrambled := make([]Move, len(moves))
+
+    perm := rand.Perm(len(moves))
+
+    for i, v := range perm {
+        scrambled[v] = moves[i]
+    }
+
     return moves
 }
 
@@ -76,8 +86,6 @@ func getNextPlayer(player string) string {
 }
 
 func evaluateBoard(board [][]string, player string, depth int) int {
-    val := 0
-
     over, winner := IsGameOver(board)
 
     if over && winner == player {
@@ -86,7 +94,7 @@ func evaluateBoard(board [][]string, player string, depth int) int {
         return -depth - 10
     }
 
-    return val + depth
+    return depth
 }
 
 func alphaBetaHelper(board [][]string, alpha int, beta int, player string, depth int) (int, Move) {

@@ -5,48 +5,95 @@ class Board extends React.Component {
         super(props);
         this.state = {
             board: [['','',''], ['','',''], ['','','']],
-            error: ""
+            error: "",
+            winner: "",
+            playerStart: true,
+            over: false
         };
         this.handleMove = this.handleMove.bind(this);
         this.newGame = this.newGame.bind(this);
     }
     handleMove(x,y) {
-        var board = this.state.board
+        if (!this.state.over) {
+            var board = this.state.board
 
-        // try to move on a spot that has been taken already
-        if (board[x][y] != "") {
-            this.setState({error: board[x][y].toUpperCase() + " is already there"})
-            return
-        }
-        else {
-            this.setState({error: ""})
-        }
-
-        // update based on click
-        board[x][y] = 'x'
-
-        // get AI move
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("POST", "/move", true);
-        xhttp.setRequestHeader("Content-Type", "application/json");
-
-        var data = JSON.stringify({"board": board})
-        xhttp.send(data);
-
-        // super hacky solution to solve a scoping problem... I don't like it
-        var obj = this
-
-        xhttp.onreadystatechange = function() {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
-                board = JSON.parse(xhttp.responseText)['Board'];
-                obj.setState({board:board})
+            // try to move on a spot that has been taken already
+            if (board[x][y] != "") {
+                this.setState({error: board[x][y].toUpperCase() + " is already there"})
+                return
             }
-        };
+            else {
+                this.setState({error: ""})
+            }
+
+            // update based on click
+            board[x][y] = 'x'
+
+            // get AI move
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/move", true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+
+            var data = JSON.stringify({"board": board, "winner": ""})
+            xhttp.send(data);
+
+            // super hacky solution to solve a scoping problem... I don't like it
+            var obj = this
+
+            xhttp.onreadystatechange = function() {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    const response = JSON.parse(xhttp.responseText)
+                    const board = response['Board'];
+                    obj.setState({board:board});
+
+                    const winner = response['Winner'];
+                    if (winner != "") {
+                        obj.setState({error: winner.toUpperCase() + " won the game!"})
+                        obj.setState({winner: winner})
+                        obj.setState({over: true})
+                        if (winner == "cat") {
+                            const playerStart = !obj.state.playerStart
+                            obj.setState({cat: cat}) 
+                        }
+                    }
+                }
+            }
+        }
     }
     newGame() {
-        this.setState({
-            board: [['','',''], ['','',''], ['','','']],
-            error: ""})
+        this.setState({over: false})
+        if (this.state.winner == "" || this.state.winner == "o") {
+            this.setState({
+                board: [['','',''], ['','',''], ['','','']],
+                error: ""})
+        }
+        else if (this.state.cat == 1 && this.state.playerStart) {
+            this.setState({
+                board: [['','',''], ['','',''], ['','','']],
+                error: ""})
+        }
+        else {
+            console.log(this.state.winner)
+            var board = [['','',''], ['','',''], ['','','']]
+            // get AI move
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/move", true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+
+            var data = JSON.stringify({"board": board, "over": false})
+            xhttp.send(data);
+
+            // super hacky solution to solve a scoping problem... I don't like it
+            var obj = this
+
+            xhttp.onreadystatechange = function() {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    const response = JSON.parse(xhttp.responseText)
+                    const board = response['Board'];
+                    obj.setState({board:board});
+                }
+            };
+        }
     }
     render() {
         return (

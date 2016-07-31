@@ -10,9 +10,11 @@ import (
 
 type Board struct {
 	Board [][]string
+    Winner string
 }
 
 func executeNextMove(b *Board) string{
+    // check if other player won the game
     over, winner := player.IsGameOver(b.Board)
 
     if over {
@@ -23,6 +25,13 @@ func executeNextMove(b *Board) string{
     move := player.GetNextMove(b.Board)
 	b.Board[move.X][move.Y] = "o"
 
+    // check for new winner
+    over, winner = player.IsGameOver(b.Board)
+
+    if over {
+        fmt.Println(winner, "won the game!")
+        return winner
+    }
     return ""
 }
 
@@ -40,7 +49,7 @@ func moveHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     // mutates b and makes the next move
-    executeNextMove(&b)
+    b.Winner = executeNextMove(&b)
 
     fmt.Println(b.Board)
 
