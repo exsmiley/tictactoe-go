@@ -11,6 +11,10 @@ type Board struct {
 	Board [][]string
 }
 
+func executeNextMove(b *Board) {
+	b.Board[0][0] = "o"
+}
+
 func moveHandler(w http.ResponseWriter, r *http.Request) {
     b := Board{}
 
@@ -23,9 +27,13 @@ func moveHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, err.Error(), 400)
         return
     }
+
+    // mutates b and makes the next move
+    executeNextMove(&b)
+
     fmt.Println(b.Board)
+
     json.NewEncoder(w).Encode(b)
-    // fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 }
 
 func main() {

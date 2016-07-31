@@ -17,20 +17,18 @@ class Board extends React.Component {
         var xhttp = new XMLHttpRequest();
         xhttp.open("POST", "/move", true);
         xhttp.setRequestHeader("Content-Type", "application/json");
-        
+
         var data = JSON.stringify({"board": board})
         xhttp.send(data);
 
+        var obj = this
+
         xhttp.onreadystatechange = function() {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
-                console.log(xhttp.responseText);
+                board = JSON.parse(xhttp.responseText)['Board'];
+                obj.setState({board:board})
             }
         };
-
-        const x2 = Math.floor((Math.random() * 3) + 0);
-        const y2 = Math.floor((Math.random() * 3) + 0);
-        board[x2][y2] = 'o'
-        this.setState({board: board});
     }
     render() {
         return (
