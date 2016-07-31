@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"encoding/json"
+    "tictactoe-go/player"
 )
 
 type Board struct {
@@ -12,7 +13,9 @@ type Board struct {
 }
 
 func executeNextMove(b *Board) {
-	b.Board[0][0] = "o"
+    move := player.GetNextMove(b.Board)
+    fmt.Println(move)
+	b.Board[move.X][move.Y] = "o"
 }
 
 func moveHandler(w http.ResponseWriter, r *http.Request) {
