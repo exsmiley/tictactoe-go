@@ -7,14 +7,15 @@ class Board extends React.Component {
             board: [['','',''], ['','',''], ['','','']],
             error: ""
         };
-        this.handleClick = this.handleClick.bind(this);
+        this.handleMove = this.handleMove.bind(this);
+        this.newGame = this.newGame.bind(this);
     }
-    handleClick(x,y) {
+    handleMove(x,y) {
         var board = this.state.board
 
         // try to move on a spot that has been taken already
         if (board[x][y] != "") {
-            this.setState({error: board[x][y] + " is already there"})
+            this.setState({error: board[x][y].toUpperCase() + " is already there"})
             return
         }
         else {
@@ -42,29 +43,35 @@ class Board extends React.Component {
             }
         };
     }
+    newGame() {
+        this.setState({
+            board: [['','',''], ['','',''], ['','','']],
+            error: ""})
+    }
     render() {
         return (
             <div>
-            <h1>{this.state.error}</h1>
                 <table>
                     <tbody>
                         <tr>
-                            <Square board={this.state.board} handleClick={this.handleClick} x="0" y="0"/>
-                            <Square board={this.state.board} handleClick={this.handleClick} x="0" y="1"/>
-                            <Square board={this.state.board} handleClick={this.handleClick} x="0" y="2"/>
+                            <Square board={this.state.board} handleClick={this.handleMove} x="0" y="0"/>
+                            <Square board={this.state.board} handleClick={this.handleMove} x="0" y="1"/>
+                            <Square board={this.state.board} handleClick={this.handleMove} x="0" y="2"/>
                         </tr>
                         <tr>
-                            <Square board={this.state.board} handleClick={this.handleClick} x="1" y="0"/>
-                            <Square board={this.state.board} handleClick={this.handleClick} x="1" y="1"/>
-                            <Square board={this.state.board} handleClick={this.handleClick} x="1" y="2"/>
+                            <Square board={this.state.board} handleClick={this.handleMove} x="1" y="0"/>
+                            <Square board={this.state.board} handleClick={this.handleMove} x="1" y="1"/>
+                            <Square board={this.state.board} handleClick={this.handleMove} x="1" y="2"/>
                         </tr>
                         <tr>
-                            <Square board={this.state.board} handleClick={this.handleClick} x="2" y="0"/>
-                            <Square board={this.state.board} handleClick={this.handleClick} x="2" y="1"/>
-                            <Square board={this.state.board} handleClick={this.handleClick} x="2" y="2"/>
+                            <Square board={this.state.board} handleClick={this.handleMove} x="2" y="0"/>
+                            <Square board={this.state.board} handleClick={this.handleMove} x="2" y="1"/>
+                            <Square board={this.state.board} handleClick={this.handleMove} x="2" y="2"/>
                         </tr>
                     </tbody>
                 </table>
+                <h1>{this.state.error}</h1>
+                <button onClick={this.newGame}>New Game</button>
             </div>
             );  
     }
