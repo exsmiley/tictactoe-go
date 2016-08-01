@@ -1,1 +1,1 @@
-web: go run server.go -port=$PORT
+web: server -port=$PORT
