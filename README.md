@@ -1,5 +1,5 @@
 # tictactoe-go
-Tic Tac Toe bot faces you online!
+Tic Tac Toe bot faces you online at https://tictactoego.herokuapp.com/!
 
 AI algorithm based on the Alpha-Beta algorithm. 
 

@@ -61,11 +61,10 @@ class Board extends React.Component {
         }
     }
     newGame() {
-        this.setState({over: false})
+        this.setState({over: false, error: ""})
         if (this.state.winner == "" || this.state.winner == "o") {
             this.setState({
-                board: [['','',''], ['','',''], ['','','']],
-                error: ""})
+                board: [['','',''], ['','',''], ['','','']]})
         }
         else if (this.state.cat == 1 && this.state.playerStart) {
             this.setState({

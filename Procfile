@@ -1,1 +1,1 @@
-web: tictactoe-go -port=$PORT
+web: tictactoe-go
