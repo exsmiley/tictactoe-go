@@ -97,38 +97,72 @@ func evaluateBoard(board [][]string, player string, depth int) int {
     return depth
 }
 
-func alphaBetaHelper(board [][]string, alpha int, beta int, player string, depth int) (int, Move) {
+type ABAction struct {
+    value int
+    move Move
+}
+
+func alphaBetaHelper(board [][]string, alpha int, beta int, player string, depth int, givenMove Move, results chan ABAction) {
     newAlpha := -beta
     newBeta := -alpha
 
     actionMove := Move{-1,-1}
+    result := ABAction{newAlpha, actionMove}
 
     over, _ := IsGameOver(board)
 
     if over || depth == 0{
-        return evaluateBoard(board, player, depth), actionMove
+        result.value = evaluateBoard(board, player, depth)
+        result.move = givenMove
+        results <- result
+        return
     }
-    for _, move := range getAllMoves(board) {
 
+    moves := getAllMoves(board)
+
+    counter := len(moves)
+
+    options := make(chan ABAction)
+
+    for _, move := range moves {
         nextBoard := doMove(board, move, player)
-        val, _ := alphaBetaHelper(nextBoard, newAlpha, newBeta, getNextPlayer(player), depth - 1)
-        val = -val
+        go alphaBetaHelper(nextBoard, newAlpha, newBeta, getNextPlayer(player), depth - 1, move, options)
+    }
+
+    for action := range options {
+        val := -action.value
         if val > newAlpha {
             newAlpha = val
-            actionMove = move
+            result = action
             if newAlpha > newBeta {
-                return newAlpha, actionMove
+                results <- action
+                close(options)
+                return
             }
+        }
+        counter--
+        if counter == 0 {
+            // no more options so return best option
+            close(options)
         }
     }
 
-    return newAlpha, actionMove
+    results <- result
 }
 
 func GetNextMove(board [][]string) Move{
     alpha := -10000
     beta := 10000
-    score, move := alphaBetaHelper(board, alpha, beta, "o", 10)
-    fmt.Println("I got a score of", score, "for", move)
+    blocker := make(chan struct{})
+    results := make(chan ABAction)
+    move := Move{-1,-1}
+    go alphaBetaHelper(board, alpha, beta, "o", 10, move, results)
+    for action := range results {
+        fmt.Println("I got a score of", action.value, "for", action.move)
+        close(results)
+        move = action.move
+        close(blocker)
+    }
+    <- blocker
     return move
 }
