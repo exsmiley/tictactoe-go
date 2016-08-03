@@ -45,6 +45,11 @@ func TestNextMove(t *testing.T) {
 	if move.X != 1 || move.Y != 1 {
 		t.Error("Expected", 1, 1, "Got", move)
 	}
+	board = [][]string{{"o", "", ""},{"", "", ""},{"", "", ""}}
+	move = GetNextMove(board)
+	if move.X != 1 || move.Y != 1 {
+		t.Error("Expected", 1, 1, "Got", move)
+	}
 }
 
 type gameovertest struct {
