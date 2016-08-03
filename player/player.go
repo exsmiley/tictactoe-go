@@ -64,7 +64,7 @@ func getAllMoves(board [][]string) []Move{
         scrambled[v] = moves[i]
     }
 
-    return moves
+    return scrambled
 }
 
 // doMove returns a new board with the move executed by the player
@@ -91,10 +91,10 @@ func evaluateBoard(board [][]string, player string, depth int) int {
     if over && winner == player {
         return 10 + depth
     } else if over && winner == getNextPlayer(player) {
-        return -depth - 10
+        return -10 - depth
     }
 
-    return depth
+    return 0
 }
 
 type ABAction struct {
@@ -131,6 +131,7 @@ func alphaBetaHelper(board [][]string, alpha int, beta int, player string, depth
 
     for action := range options {
         val := -action.value
+        centerMove := Move{1,1}
         if val > newAlpha {
             newAlpha = val
             result = action
@@ -139,6 +140,8 @@ func alphaBetaHelper(board [][]string, alpha int, beta int, player string, depth
                 close(options)
                 return
             }
+        } else if val == newAlpha && action.move == centerMove {
+            result = action
         }
         counter--
         if counter == 0 {
