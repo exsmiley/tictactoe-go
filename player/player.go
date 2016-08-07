@@ -46,8 +46,8 @@ func getAllMoves(board [][]string) []Move{
         return moves
     }
 
-    for i := 0; i < 3; i++ {
-        for j := 0; j < 3; j++ {
+    for i := 0; i < len(board); i++ {
+        for j := 0; j < len(board[i]); j++ {
             if board[i][j] == "" {
                 move := Move{i,j}
                 moves = append(moves, move)
@@ -97,6 +97,18 @@ func evaluateBoard(board [][]string, player string, depth int) int {
     return 0
 }
 
+func isEmpty(board [][]string) bool {
+    for i := 0; i < len(board); i++ {
+        for j := 0; j < len(board[i]); j++ {
+            if board[i][j] != "" {
+                return false
+            }
+        }
+    }
+
+    return true
+}
+
 type ABAction struct {
     value int
     move Move
@@ -132,6 +144,7 @@ func alphaBetaHelper(board [][]string, alpha int, beta int, player string, depth
     for action := range options {
         val := -action.value
         centerMove := Move{1,1}
+
         if val > newAlpha {
             newAlpha = val
             result = action
@@ -140,7 +153,7 @@ func alphaBetaHelper(board [][]string, alpha int, beta int, player string, depth
                 close(options)
                 return
             }
-        } else if val == newAlpha && action.move == centerMove {
+        } else if val == newAlpha && action.move == centerMove && !isEmpty(board) {
             result = action
         }
         counter--

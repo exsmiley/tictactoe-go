@@ -93,3 +93,21 @@ func TestGetNextPlayer(t *testing.T) {
 		t.Error("Expected", "x", "Got", next)
 	}
 }
+
+func TestIsEmptyBoard(t *testing.T) {
+	blankBoard := [][]string{{"","",""},{"","",""},{"","",""}}
+
+	blank := isEmpty(blankBoard)
+
+	if !blank {
+		t.Error("Expected true, got", blank)
+	}
+
+	notBlankBoard := [][]string{{"","",""},{"x","",""},{"","",""}}
+
+	notBlank := isEmpty(notBlankBoard)
+
+	if notBlank {
+		t.Error("Expected false, got", notBlank)
+	}
+}
